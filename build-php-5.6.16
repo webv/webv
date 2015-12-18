@@ -1,0 +1,53 @@
+#! /bin/bash
+
+set -e
+
+cd ..
+
+php=php-5.6.16
+workdir=/opt/src/${php}/
+
+if [ ! -e ${workdir}${php}.tar.xz ]; then
+    wget -U "" -O ${workdir}${php}.tar.xz http://www.php.net/distributions/${php}.tar.xz
+fi
+
+if [ -e ${workdir}${php} ]; then
+    echo "Remove directory ${workdir}${php}"
+    rm -R ${workdir}${php}
+fi
+
+cd ${workdir}
+
+tar xf ${workdir}${php}.tar.xz
+
+cd ${workdir}${php}
+
+### Build
+
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+etc=/etc/${php}
+
+./configure --prefix=/opt                \
+            --sysconfdir=${etc}            \
+            --localstatedir=/home         \
+            --datadir=/usr/share/php     \
+            --mandir=/usr/share/man      \
+            --enable-fpm                 \
+            --with-fpm-user=www-data       \
+            --with-fpm-group=www-data      \
+            --with-config-file-path=${etc} \
+            --with-zlib                  \
+            --enable-bcmath              \
+            --with-bz2                   \
+            --enable-calendar            \
+            --enable-dba=shared          \
+            --with-gdbm                  \
+            --with-gmp                   \
+            --enable-ftp                 \
+            --with-gettext               \
+            --enable-mbstring            \
+            --with-readline
+
+#make
+#make install
